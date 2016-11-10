@@ -139,6 +139,7 @@ void TestMinibatchSourceWarmStart(size_t numMBs, size_t minibatchSize, size_t wa
 
         auto minibatchData = minibatchSource->GetNextMinibatch(minibatchSize);
 
+        // NOTE: the expectedNumSamples are valid only in this test case scenario
         size_t expectedNumSamples = distributed ? minibatchSize / numWorkers : minibatchSize;
 
         if (minibatchData[featureStreamInfo].m_numSamples != expectedNumSamples)
