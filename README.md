@@ -3,7 +3,7 @@
 Highlights of this Release:
 * Feature tuning and bug fixing based on the feedback on Beta 1
 * Changes in the Examples and Tutorials based on the same feedback
-* New [Tutorial on Reinforcement Learning](https://github.com/Microsoft/CNTK/blob/master/bindings/python/tutorials/CNTK_203_Reinforcement_Learning_Basics.ipynb)
+* New [Tutorial on Reinforcement Learning](https://github.com/Microsoft/CNTK/blob/master/Tutorials/CNTK_203_Reinforcement_Learning_Basics.ipynb)
 
 See more in the [Release Notes](https://github.com/Microsoft/CNTK/wiki/CNTK_2_0_beta_2_Release_Notes)  
 Get the Release from the [CNTK Releases page](https://github.com/Microsoft/CNTK/releases)
