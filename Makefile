@@ -472,6 +472,7 @@ CNTKLIBRARY_TESTS_SRC =\
 	$(CNTKLIBRARY_TESTS_SRC_PATH)/Seq2Seq.cpp \
 	$(CNTKLIBRARY_TESTS_SRC_PATH)/TruncatedLSTMAcousticModel.cpp \
 	$(CNTKLIBRARY_TESTS_SRC_PATH)/DeviceSelectionTests.cpp \
+	$(CNTKLIBRARY_TESTS_SRC_PATH)/MinibatchSourceTest.cpp \
 	Examples/Evaluation/CPPEvalV2Client/EvalMultithreads.cpp \
 
 CNTKLIBRARY_TESTS:=$(BINDIR)/v2librarytests
@@ -493,7 +494,6 @@ $(CNTKLIBRARY_TESTS): $(CNTKLIBRARY_TESTS_OBJ) | $(CNTKLIBRARY_LIB)
 CNTKLIBRARY_DISTRIBUTION_TESTS_SRC =\
 	$(CNTKLIBRARY_TESTS_SRC_PATH)/Common.cpp \
 	Tests/UnitTests/V2LibraryDistributionTests/Main.cpp \
-	Tests/UnitTests/V2LibraryDistributionTests/MinibatchSourceTest.cpp \
 	Tests/UnitTests/V2LibraryDistributionTests/FrameModeTests.cpp \
 
 CNTKLIBRARY_DISTRIBUTION_TESTS:=$(BINDIR)/v2librarydistributiontests
