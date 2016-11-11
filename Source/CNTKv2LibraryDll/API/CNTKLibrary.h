@@ -2700,6 +2700,16 @@ namespace CNTK
     }
 
     ///
+    /// Create an instance of the CNTK built-in operation to compute binary cross-entropy for specified input operands.
+    ///
+    CNTK_API FunctionPtr BinaryCrossEntropy(const Variable& prediction, const Variable& targets, const std::wstring& name = L"");
+
+    ///
+    /// Create an instance of the CNTK built-in operation to compute weighted binary cross-entropy for specified input operands.
+    ///
+    CNTK_API FunctionPtr WeightedBinaryCrossEntropy(const Variable& prediction, const Variable& targets, const Variable& weights, const std::wstring& name = L"");
+
+    ///
     /// Create an instance of the CNTK built-in operation to compute squared-error for specified input operands.
     ///
     CNTK_API FunctionPtr SquaredError(const Variable& prediction, const Variable& targets, const std::wstring& name = L"");
@@ -3360,6 +3370,8 @@ namespace CNTK
         const std::vector<LearnerPtr>& ParameterLearners() const { return m_parameterLearners; }
 
     private:
+        void Save(const std::wstring& modelFilePath, bool usingLegacyModelFormat, const Dictionary& state);
+
         FunctionPtr m_combinedTrainingFunction;
         FunctionPtr m_model;
         FunctionPtr m_lossFunction;
@@ -3604,10 +3616,19 @@ namespace CNTK
         CNTK_API virtual DistributedCommunicatorPtr SubGroup(const std::unordered_set<DistributedWorkerDescriptor>& subGroupWorkers) const = 0;
 
         // A collective communication API to concatenate values across each worker of this communicator. The concatenated values are only sent to the specified workers; for all others the returned Values are null
-        // TODO: Add an async variant of the Concatenate method
         CNTK_API virtual void Concatenate(
             const std::vector<ValuePtr>& values,
             std::vector<ValuePtr>& outputValues,
+            const std::unordered_set<DistributedWorkerDescriptor>& sendToWorkers) = 0;
+
+        CNTK_API virtual void Concatenate(
+            const std::vector<NDArrayViewPtr>& input,
+            std::vector<NDArrayViewPtr>& output,
+            const std::unordered_set<DistributedWorkerDescriptor>& sendToWorkers) = 0;
+
+        CNTK_API virtual void Gather(
+            const Dictionary& input,
+            std::vector<DictionaryPtr>& output,
             const std::unordered_set<DistributedWorkerDescriptor>& sendToWorkers) = 0;
 
         // A collective communication API to aggregate values across each worker of this communicator. 
@@ -3673,6 +3694,7 @@ namespace CNTK
     /// A collection of additional information needed for the distributed trainer to aggregate the gradients
     struct MinibatchInfo
     {
+        bool atEndOfData;
         size_t numberOfSamples;
         NDArrayViewPtr trainingLossValue;
         NDArrayViewPtr evalCriterionValue;
@@ -3687,14 +3709,15 @@ namespace CNTK
         // Optional override that gets called before each minibatch during training
         CNTK_API virtual void PreMinibatchCallback(const Trainer& trainer) = 0;
 
-        // Optional override that gets called per minibatch after finishing gradient computation but before updating model parameters
-        CNTK_API virtual void PreParameterUpdateCallback(const Trainer& trainer, std::vector<std::pair<Parameter, NDArrayViewPtr>>& gradientValues, MinibatchInfo& info) = 0;
+        // Optional override that gets called per minibatch after finishing gradient computation but before updating model parameters.
+        CNTK_API virtual bool PreParameterUpdateCallback(const Trainer& trainer, std::vector<std::pair<Parameter, NDArrayViewPtr>>& gradientValues, MinibatchInfo& info) = 0;
 
         // Optionally overridable method to get checkpoint state associated with this Distributed train method
-        CNTK_API virtual Dictionary GetCheckpointState() const = 0;
+        CNTK_API virtual Dictionary CreateCheckpoint(const Trainer& trainer, const Dictionary& localStateToShare) = 0;
 
         // Optionally overridable method to restore state pertaining this distributed training method from a previous checkpoint
-        CNTK_API virtual void RestoreFromCheckpoint(const Dictionary& checkpoint) = 0;
+        // Returns local state that corresponds to this worker.
+        CNTK_API virtual Dictionary RestoreFromCheckpoint(const Dictionary& checkpoint) = 0;
 
         // Return the distributed communicator used in the distributed trainer
         CNTK_API virtual DistributedCommunicatorPtr GetCommunicator() = 0;

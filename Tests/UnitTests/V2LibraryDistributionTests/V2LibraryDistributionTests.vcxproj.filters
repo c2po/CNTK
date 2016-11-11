@@ -21,7 +21,7 @@
     <ClCompile Include="..\V2LibraryTests\Common.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TrainerTest.cpp">
+    <ClCompile Include="FrameModeTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MinibatchSourceTest.cpp">

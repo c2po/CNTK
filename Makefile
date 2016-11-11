@@ -418,6 +418,7 @@ CNTKLIBRARY_COMMON_SRC =\
 	$(SOURCEDIR)/CNTKv2LibraryDll/Learner.cpp \
 	$(SOURCEDIR)/CNTKv2LibraryDll/Serialization.cpp \
 	$(SOURCEDIR)/CNTKv2LibraryDll/DistributedCommunicator.cpp \
+	$(SOURCEDIR)/CNTKv2LibraryDll/DistributedTrainerBase.cpp \
 	$(SOURCEDIR)/CNTKv2LibraryDll/DataParallelDistributedTrainer.cpp \
 	$(SOURCEDIR)/CNTKv2LibraryDll/proto/CNTK.pb.cc \
 
@@ -493,7 +494,7 @@ CNTKLIBRARY_DISTRIBUTION_TESTS_SRC =\
 	$(CNTKLIBRARY_TESTS_SRC_PATH)/Common.cpp \
 	Tests/UnitTests/V2LibraryDistributionTests/Main.cpp \
 	Tests/UnitTests/V2LibraryDistributionTests/MinibatchSourceTest.cpp \
-	Tests/UnitTests/V2LibraryDistributionTests/TrainerTest.cpp \
+	Tests/UnitTests/V2LibraryDistributionTests/FrameModeTests.cpp \
 
 CNTKLIBRARY_DISTRIBUTION_TESTS:=$(BINDIR)/v2librarydistributiontests
 CNTKLIBRARY_DISTRIBUTION_TESTS_OBJ := $(patsubst %.cu, $(OBJDIR)/%.o, $(patsubst %.cpp, $(OBJDIR)/%.o, $(CNTKLIBRARY_DISTRIBUTION_TESTS_SRC)))
@@ -1112,7 +1113,7 @@ python: $(ALL_LIBS)
             declare -A py_paths; \
             py_paths[34]=$(PYTHON34_PATH); \
             py_paths[35]=$(PYTHON35_PATH); \
-            export LD_LIBRARY_PATH=$$LD_LIBRARY_PATH:$$(echo $(LIBPATH) $(KALDI_LIBPATH) | tr " " :); \
+            export LD_LIBRARY_PATH=$$LD_LIBRARY_PATH:$$(echo $(GDK_NVML_LIB_PATH) $(LIBPATH) $(KALDI_LIBPATH) | tr " " :); \
             ldd $(LIBDIR)/* | grep "not found" && false; \
             export CNTK_EXTRA_LIBRARIES=$$(ldd $(LIBDIR)/* | grep "^\s.*=> " | cut -d ">" -f 2- --only-delimited | cut -d "(" -f 1 --only-delimited | sort -u | grep -Ff <(echo $(EXTRA_LIBS_BASENAMES) | xargs -n1)); \
             test -x $(SWIG_PATH); \
