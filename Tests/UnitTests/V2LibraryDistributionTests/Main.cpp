@@ -5,12 +5,15 @@
 
 #define _CRT_SECURE_NO_WARNINGS // "secure" CRT not available on all platforms  --add this at the top of all CPP files that give "function or variable may be unsafe" warnings
 
-#include "DistributionTestCommon.h"
+#include "CNTKLibrary.h"
+#include "Common.h"
 #include <cstdio>
+
+using namespace CNTK;
+using namespace std::placeholders;
 
 void TestFrameMode();
 
-        // Check the environment variable TEST_1BIT_SGD to decide whether to run on a CPU-only device.
 int main(int argc, char* argv[])
 {
 #if defined(_MSC_VER)
@@ -28,11 +31,9 @@ int main(int argc, char* argv[])
     }
 
     {
-            auto communicator = QuantizedMPICommunicator(true, true, 32);
-            auto distributedTrainer = CreateQuantizedDataParallelDistributedTrainer(communicator, false);
-            TrainSimpleDistributedFeedForwardClassifer(DeviceDescriptor::CPUDevice(), distributedTrainer, communicator->CurrentWorker().m_globalRank);
+        auto communicator = MPICommunicator();
+        std::string logFilename = argv[1] + std::to_string(communicator->CurrentWorker().m_globalRank);
         auto result = freopen(logFilename.c_str(), "w", stdout);
-                TrainSimpleDistributedFeedForwardClassifer(DeviceDescriptor::GPUDevice(0), distributedTrainer, communicator->CurrentWorker().m_globalRank);
         if (result == nullptr)
         {
             fprintf(stderr, "Could not redirect stdout.\n");

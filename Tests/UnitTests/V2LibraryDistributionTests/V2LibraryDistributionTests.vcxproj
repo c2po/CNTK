@@ -117,10 +117,6 @@
     <ClCompile Include="..\V2LibraryTests\Common.cpp" />
     <ClCompile Include="FrameModeTests.cpp" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="MinibatchSourceTest.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="DistributionTestCommon.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

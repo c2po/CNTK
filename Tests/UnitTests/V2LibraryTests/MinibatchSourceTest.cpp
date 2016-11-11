@@ -3,7 +3,10 @@
 // Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
 //
 
-#include "DistributionTestCommon.h"
+#include "CNTKLibrary.h"
+#include "Common.h"
+
+using namespace CNTK;
 
 // Mock communicator to simulate MPI run
 class MockCommunicator : public DistributedCommunicator
@@ -31,6 +34,18 @@ public:
     virtual void Concatenate(
         const std::vector<ValuePtr>&,
         std::vector<ValuePtr>&,
+        const std::unordered_set<DistributedWorkerDescriptor>&) override
+    {}
+
+    virtual void Concatenate(
+        const std::vector<NDArrayViewPtr>&,
+        std::vector<NDArrayViewPtr>&,
+        const std::unordered_set<DistributedWorkerDescriptor>&) override
+    {}
+
+    virtual void Gather(
+        const Dictionary&,
+        std::vector<DictionaryPtr>&,
         const std::unordered_set<DistributedWorkerDescriptor>&) override
     {}
 
@@ -150,4 +165,11 @@ void TestMinibatchSourceWarmStart(size_t numMBs, size_t minibatchSize, size_t wa
 
         totalSamples += minibatchSize;
     }
+}
+
+void MinibatchSourceTests()
+{
+    TestMinibatchSourceWarmStart(10, 64, 128);
+    TestMinibatchSourceWarmStart(10, 64, 0);
+    TestMinibatchSourceWarmStart(10, 64, 100);
 }

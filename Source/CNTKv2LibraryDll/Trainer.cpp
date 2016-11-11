@@ -13,15 +13,11 @@ namespace
 {
     const std::wstring learnersPropertyName = L"Learners";
     const std::wstring distributedLearnerPropertyName = L"DistributedLearner";
-	const std::wstring totalSeenSamplesPropertyName = L"TotalSeenSamples";
+    const std::wstring totalSeenSamplesPropertyName = L"TotalSeenSamples";
 }
 
 namespace CNTK
 {
-    // names for checkpoint attributes
-    static const wchar_t* LearnerStatesAttributeName = L"checkpointLearnerStates";
-    static const wchar_t* TotalSeenSamplesAttributeName = L"checkpointTotalSeenSamples";
-
     Trainer::Trainer(const FunctionPtr& model, const FunctionPtr& lossFunction, const FunctionPtr& evaluationFunction, const std::vector<LearnerPtr>& parameterLearners, const DistributedTrainerPtr& distributedTrainer)
         : m_model(model), m_lossFunction(lossFunction), m_evaluationFunction(evaluationFunction), m_parameterLearners(parameterLearners), m_prevMinibatchNumSamples(1), m_distributedTrainer(distributedTrainer), m_totalSamplesSeen(0)
     {
@@ -281,15 +277,15 @@ namespace CNTK
         vector<DictionaryValue> learnerStates;
         for (const auto& learner : m_parameterLearners)
         {
-                // TODO: add DictionaryValue(T&&)
-                learnerStates.push_back(std::move(DictionaryValue(learner->Serialize())));
+
+            learnerStates.push_back(std::move(DictionaryValue(learner->Serialize())));
         }
 
         // add DictionaryValue ctor that takes an rvalue!
         Dictionary state;
         state[learnersPropertyName] = learnerStates;
         state[distributedLearnerPropertyName] = distributedLearnerState;
-		state[totalSeenSamplesPropertyName] = m_totalSamplesSeen;
+        state[totalSeenSamplesPropertyName] = m_totalSamplesSeen;
 
         m_combinedTrainingFunction->SaveModel(modelFilePath, usinglegacyModelFormat);
         std::wstring trainerStateCheckpointFilePath = GetTrainerStateCheckpointFilePath(modelFilePath);
